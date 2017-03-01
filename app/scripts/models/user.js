@@ -15,7 +15,7 @@ var UserCollection = Backbone.Collection.extend({
   model: User,
   url: 'https://tiny-parse-server.herokuapp.com/classes/Baldwin',
   initialize: function() {
-
+    
   }
 });
 

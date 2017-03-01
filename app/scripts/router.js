@@ -3,9 +3,9 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var Backbone = require('backbone');
 var setupAjax = require('./ajax_utility.js').setupAjax;
-var LoginContainer = require('./components/login.jsx').LoginContainer;
+var RegistrationContainer = require('./components/login.jsx').RegistrationContainer;
 
-console.log('ajax', setupAjax);
+//console.log('ajax', setupAjax);
 var ChatAppRouter = Backbone.Router.extend({
   routes: {
     '': 'index'
@@ -17,7 +17,7 @@ var ChatAppRouter = Backbone.Router.extend({
   index: function() {
 
     ReactDOM.render(
-      React.createElement(LoginContainer),
+      React.createElement(RegistrationContainer),
       document.getElementById('app')
     );
   }
