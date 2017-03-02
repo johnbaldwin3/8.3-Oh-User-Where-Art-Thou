@@ -1,27 +1,28 @@
 var React = require('react');
 
-var UserCollection = require('../models/user.js').UserCollection;
+var User = require('../models/user.js').User;
 var setupAjax = require('../ajax_utility').setupAjax;
 
 
 var RegistrationContainer = React.createClass({
   getInitialState: function() {
-    var userCollection = new UserCollection();
+    var userA = new User();
     setupAjax();
-    //userCollection.fetch();
     return {
-      userCollection
+      userA
     }
   },
-  onSubmit: function(user, pass) {
-    //e.preventDefault();
+  onSubmitNew: function(user, pass) {
     setupAjax();
-    console.log('user', user);
-    console.log('pass', pass);
-    this.state.userCollection.create({'username': user, 'password': pass});
-    //this.forceUpdate();
-    console.log('clicked');
-    console.log('substate', this.state);
+    User.signup({username: user, password: pass});
+  },
+  onSubmit: function(user, pass) {
+    setupAjax();
+    User.login({username: user, password: pass}, function(user){
+      console.log(user);
+      User.store(user);
+      setupAjax(user);
+    });
 
   },
   render: function(){
@@ -36,29 +37,29 @@ var RegistrationContainer = React.createClass({
             </div>
             <div className="col-md-6">
               <h1>No Account? Sign Up Now!</h1>
-              <NewUser onSubmit={this.onSubmit}
-                       userCollection={this.state.userCollection}/>
+              <NewUser onSubmitNew={this.onSubmitNew}
+                       userA={this.state.userA}/>
             </div>
           </div>
         </div>
     )
-}
+  }
 
 });
 
 var ExistingUser = React.createClass({
   getPass: function(event) {
     this.setState({'password': event.target.value});
-    console.log('pass-state', this.state);
+    //console.log('pass-state', this.state);
   },
   getUser: function(event) {
     this.setState({'username': event.target.value});
-    console.log('user-state', this.state);
+    //console.log('user-state', this.state);
   },
   render: function() {
     var self = this;
     return(
-      <form
+      <form onSubmit={(e) => {e.preventDefault(); this.props.onSubmit(this.state.username, this.state.password);}}
         id="login">
         <div className="form-group">
           <label htmlFor="email-login">Email address</label>
@@ -78,29 +79,29 @@ var ExistingUser = React.createClass({
 
 var NewUser = React.createClass({
   getInitialState: function() {
-      var userCollection = new UserCollection();
+      var userB = new User();
       setupAjax();
       var self = this;
-      userCollection.fetch().done(function(){
-        self.setState({userCollection: userCollection});
+      userB.fetch().done(function(){
+        self.setState({userB: userB});
         self.forceUpdate();
       });
     return {
-      userCollection
+      userB
     }
   },
   getPass: function(event) {
     this.setState({'password': event.target.value});
-    console.log('pass-state', this.state);
+    //console.log('pass-state', this.state);
   },
   getUser: function(event) {
     this.setState({'username': event.target.value});
-    console.log('user-state', this.state);
+    //console.log('user-state', this.state);
   },
   render: function() {
 
     return(
-      <form onSubmit={(e) => {e.preventDefault(); this.props.onSubmit(this.state.username, this.state.password);}} id="signup">
+      <form onSubmit={(e) => {e.preventDefault(); this.props.onSubmitNew(this.state.username, this.state.password);}} id="signup">
         <div className="form-group">
           <label htmlFor="email">Email address</label>
           <input onChange={this.getUser} id="signup-email" className="form-control" type="text" name="email" placeholder="Enter Email Adress"/>
